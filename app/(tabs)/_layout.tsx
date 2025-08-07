@@ -46,6 +46,12 @@ export default function TabLayout() {
           title: 'Camera',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="camera.fill" color={color} />,
         }}></Tabs.Screen>
+      <Tabs.Screen
+        name="camera_permission"
+        options={{
+          title: 'Camera Permission',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="wrench.fill" color={color} />,
+        }}></Tabs.Screen>
     </Tabs>
   );
 }

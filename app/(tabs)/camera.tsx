@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { Linking, Platform, Text, } from 'react-native';
+import { Linking, Platform, Text } from 'react-native';
 import {
   Camera,
   useCameraDevice,
-  useCameraPermission
+  useCameraPermission,
 } from 'react-native-vision-camera';
 
 export default function MyCameraScreen() {
@@ -12,7 +12,7 @@ export default function MyCameraScreen() {
 
   useEffect(() => {
     if (!hasPermission) {
-      requestPermission().then((granted) => {
+        requestPermission().then((granted) => {
         if (!granted) {
           // User denied permission, guide them to settings
           Linking.openSettings();
