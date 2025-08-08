@@ -40,7 +40,16 @@
         {
           "cameraPermissionText": "$(PRODUCT_NAME) needs access to your camera to scan QR codes."
         }
-      ]
+      ],
+      [ 
+        "expo-build-properties", 
+        { 
+          "android": { 
+          "minSdkVersion": 26
+          } 
+        } 
+      ] 
+
       
     ],
     "experiments": {

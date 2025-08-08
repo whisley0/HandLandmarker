@@ -37,7 +37,6 @@ export default function MyCameraScreen() {
     <Camera
       device={device}
       isActive={true}
-      style={{ flex: 1 }}
       frameProcessor={frameProcessor}
       pixelFormat={pixelFormat}
     />
