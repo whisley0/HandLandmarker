@@ -4,6 +4,7 @@ import {
   Camera,
   useCameraDevice,
   useCameraPermission,
+  useSkiaFrameProcessor,
 } from 'react-native-vision-camera';
 
 export default function MyCameraScreen() {
@@ -25,6 +26,11 @@ export default function MyCameraScreen() {
     return <Text>No camera device found.</Text>;
   }
 
+  const frameProcessor = useSkiaFrameProcessor(frame => {
+    'worklet';
+    frame.render();
+  }, []);
+
   const pixelFormat = Platform.OS === 'ios' ? 'rgb' : 'yuv';
 
   return (
@@ -32,6 +38,8 @@ export default function MyCameraScreen() {
       device={device}
       isActive={true}
       style={{ flex: 1 }}
+      frameProcessor={frameProcessor}
+      pixelFormat={pixelFormat}
     />
   );
 }

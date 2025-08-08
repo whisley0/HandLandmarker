@@ -90,8 +90,8 @@ android {
     namespace 'com.anonymous.test'
     defaultConfig {
         applicationId 'com.anonymous.test'
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdkVersion 26
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0.0"
     }
