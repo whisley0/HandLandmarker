@@ -1,5 +1,4 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
 import { Platform } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
@@ -51,6 +50,12 @@ export default function TabLayout() {
         options={{
           title: 'Camera Permission',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="wrench.fill" color={color} />,
+        }}></Tabs.Screen>
+      <Tabs.Screen
+        name="handlandmarker"
+        options={{
+          title: 'Hand Landmarker',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="car.fill" color={color} />,
         }}></Tabs.Screen>
     </Tabs>
   );
