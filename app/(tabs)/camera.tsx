@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Linking, Platform, Text } from 'react-native';
+import { Linking, Platform, StyleSheet, Text } from 'react-native';
 import {
   Camera,
   useCameraDevice,
@@ -26,10 +26,10 @@ export default function MyCameraScreen() {
     return <Text>No camera device found.</Text>;
   }
 
-  const frameProcessor = useSkiaFrameProcessor(frame => {
-    'worklet';
-    frame.render();
-  }, []);
+  const frameProcessor = useSkiaFrameProcessor((frame) => {
+    'worklet'
+    frame.render()
+  }, [])
 
   const pixelFormat = Platform.OS === 'ios' ? 'rgb' : 'yuv';
 
@@ -39,6 +39,7 @@ export default function MyCameraScreen() {
       isActive={true}
       frameProcessor={frameProcessor}
       pixelFormat={pixelFormat}
+      style={StyleSheet.absoluteFill}
     />
   );
 }
