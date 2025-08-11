@@ -1,36 +1,44 @@
-import { useEffect } from 'react';
-import { NativeModules, Platform, StyleSheet, Text } from 'react-native';
+// For JS/TS
+import React, { useEffect } from 'react';
 import {
-    Camera,
-    useCameraDevice,
-    useCameraPermission,
-    useSkiaFrameProcessor,
-    VisionCameraProxy,
+  NativeEventEmitter, NativeModules,
+  Platform, StyleSheet, Text
+} from 'react-native';
+import { useSharedValue } from 'react-native-reanimated';
+import {
+  Camera,
+  Frame,
+  useCameraDevice,
+  useCameraPermission,
+  useSkiaFrameProcessor,
+  VisionCameraProxy
 } from 'react-native-vision-camera';
+
+import { Skia } from "@shopify/react-native-skia";
 
 const { HandLandmarks } = NativeModules;
 
 const handLandmarksEmitter = new NativeEventEmitter(HandLandmarks);
 
-// Initialize the frame processor plugin 'handLandmarks'
-const handLandMarkPlugin = VisionCameraProxy.initFrameProcessorPlugin(
-  'handLandmarks',
-  {},
-);
+const plugin = VisionCameraProxy.initFrameProcessorPlugin('facedetector', {})
 
-// Create a worklet function 'handLandmarks' that will call the plugin function
-function handLandmarks(frame: Frame) {
-  'worklet';
-  if (handLandMarkPlugin == null) {
-    throw new Error('Failed to load Frame Processor Plugin!');
+export function facedetector(frame: Frame) {
+  'worklet'
+  if (plugin == null) {
+    throw new Error("Failed to load Frame Processor Plugin!")
   }
-  return handLandMarkPlugin.call(frame);
+  return plugin.call(frame)
 }
 
+//main application
 function HandCameraDemo() {
   const landmarks = useSharedValue({});
   const device = useCameraDevice('front');
   const { hasPermission, requestPermission } = useCameraPermission();
+  const linePaint = Skia.Paint()
+  linePaint.setColor(Skia.Color('red'))
+  const paint = Skia.Paint()
+  paint.setColor(Skia.Color('blue'))
 
   useEffect(() => {
     // Set up the event listener to listen for hand landmarks detection results
@@ -70,7 +78,7 @@ function HandCameraDemo() {
     frame.render();
 
     // Process the frame using the 'handLandmarks' function
-    handLandmarks(frame);
+    facedetector(frame);
 
     /* 
       Paint landmarks on the screen.
@@ -79,6 +87,8 @@ function HandCameraDemo() {
     */
     if (landmarks.value[0]) {
       const hand = landmarks.value[0];
+      const lines = landmarks.value[0];
+      
       const frameWidth = frame.width;
       const frameHeight = frame.height;
 

@@ -15,10 +15,8 @@ import com.google.mediapipe.framework.image.MPImage
 import com.google.mediapipe.tasks.core.BaseOptions
 import com.google.mediapipe.tasks.core.OutputHandler
 import com.google.mediapipe.tasks.vision.core.RunningMode
-
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarker
 import com.google.mediapipe.tasks.vision.handlandmarker.HandLandmarkerResult
-
 import com.mrousavy.camera.frameprocessors.Frame
 
 class HandLandmarks(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
@@ -67,11 +65,11 @@ class HandLandmarks(reactContext: ReactApplicationContext) : ReactContextBaseJav
 
             var handName = ""
 
-            /*for(hand in result.handedness()) {
+            for(hand in result.handednesses()) {
                 for(handProps in hand){
                     handName = handProps.categoryName()
                 }
-            }*/
+            }
 
             val params = Arguments.createMap()
             params.putArray("landmarks", landmarksArray)

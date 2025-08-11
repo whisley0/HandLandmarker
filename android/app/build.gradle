@@ -175,7 +175,9 @@ dependencies {
         implementation jscFlavor
     }
 
-    implementation 'com.google.mediapipe:tasks-vision:0.10.14'
-    implementation 'androidx.camera:camera-core:1.2.0'
-    implementation 'androidx.camera:camera-camera2:1.2.0'
+    implementation 'com.google.mediapipe:tasks-vision:latest.release'
+    implementation 'androidx.camera:camera-camera2:latest.release'
+    implementation 'androidx.camera:camera-core:latest.release'
+    implementation "com.facebook.soloader:soloader:0.10.4+"
+    
 }
