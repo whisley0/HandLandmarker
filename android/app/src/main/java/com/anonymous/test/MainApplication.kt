@@ -1,5 +1,7 @@
 package com.anonymous.test
 
+import android.util.Log;
+
 import android.app.Application
 import android.content.res.Configuration
 
@@ -22,7 +24,7 @@ import expo.modules.ReactNativeHostWrapper
 import com.mrousavy.camera.frameprocessors.FrameProcessorPluginRegistry
 
 import com.myproject.HandLandmarksPackage
-import com.anonymous.test.facedetectorframeprocessor.FaceDetectorFrameProcessorPluginPackage
+import com.anonymous.test.handlandmarksframeprocessor.HandLandmarksFrameProcessorPluginPackage
 
 class MainApplication : Application(), ReactApplication {
  
@@ -31,17 +33,19 @@ class MainApplication : Application(), ReactApplication {
                 override fun getPackages(): List<ReactPackage> {
                     val packages = PackageList(this).packages.toMutableList()
                     // Add the HandLandmarksFrameProcessorPluginPackage manually
-                    packages.add(FaceDetectorFrameProcessorPluginPackage())
+                    packages.add(HandLandmarksFrameProcessorPluginPackage())
                     packages.add(HandLandmarksPackage())
+                    Log.i("packageGeneration", "registration of packages")
+
                     return packages
                 }
 
                 override fun getJSMainModuleName(): String = "index"
 
-                override fun getUseDeveloperSupport(): Boolean = true
+                override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
 
-                override val isNewArchEnabled: Boolean = true
-                override val isHermesEnabled: Boolean = true
+                override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
+                override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
             }
 
   override val reactHost: ReactHost

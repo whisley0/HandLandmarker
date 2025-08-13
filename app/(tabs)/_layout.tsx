@@ -57,6 +57,12 @@ export default function TabLayout() {
           title: 'Hand Landmarker',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="car.fill" color={color} />,
         }}></Tabs.Screen>
+      <Tabs.Screen
+        name="simplelandmarker"
+        options={{
+          title: 'Hand Landmarker (simple method)',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="car.fill" color={color} />,
+        }}></Tabs.Screen>
     </Tabs>
   );
 }

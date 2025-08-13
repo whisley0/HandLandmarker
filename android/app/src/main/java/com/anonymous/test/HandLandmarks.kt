@@ -30,6 +30,16 @@ class HandLandmarks(reactContext: ReactApplicationContext) : ReactContextBaseJav
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
                 .emit(eventName, params)
     }
+    
+    @ReactMethod
+    fun addListener(type: String?) {
+        // Keep: Required for RN built in Event Emitter Calls.
+    }
+
+    @ReactMethod
+    fun removeListeners(type: Int?) {
+        // Keep: Required for RN built in Event Emitter Calls.
+    }
 
     @ReactMethod
     fun initModel() {

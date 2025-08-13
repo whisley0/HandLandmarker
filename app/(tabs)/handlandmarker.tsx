@@ -1,7 +1,8 @@
 // For JS/TS
 import React, { useEffect } from 'react';
 import {
-  NativeEventEmitter, NativeModules,
+  NativeEventEmitter,
+  NativeModules,
   Platform, StyleSheet, Text
 } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
@@ -14,31 +15,76 @@ import {
   VisionCameraProxy
 } from 'react-native-vision-camera';
 
-import { Skia } from "@shopify/react-native-skia";
+import { PaintStyle, Skia } from "@shopify/react-native-skia";
 
 const { HandLandmarks } = NativeModules;
 
 const handLandmarksEmitter = new NativeEventEmitter(HandLandmarks);
 
-const plugin = VisionCameraProxy.initFrameProcessorPlugin('facedetector', {})
+const handLandMarkPlugin = VisionCameraProxy.initFrameProcessorPlugin(
+  "handLandmarks",
+   {},
+  );
 
-export function facedetector(frame: Frame) {
+// Create a worklet function 'handLandmarks' that will call the plugin function
+export function handLandmarks(frame: Frame) {
   'worklet'
-  if (plugin == null) {
-    throw new Error("Failed to load Frame Processor Plugin!")
+
+  if (handLandMarkPlugin == null) {
+    console.log('no plugin found!');
+    throw new Error("Failed to load Frame Processor Plugin!");
+
   }
-  return plugin.call(frame)
+
+  console.log(handLandMarkPlugin.call(frame));
+
+  return handLandMarkPlugin.call(frame)
 }
 
+const lines = [
+  [0, 1],
+  [1, 2],
+  [2, 3],
+  [3, 4],
+  [0, 5],
+  [5, 6],
+  [6, 7],
+  [7, 8],
+  [5, 9],
+  [9, 10],
+  [10, 11],
+  [11, 12],
+  [9, 13],
+  [13, 14],
+  [14, 15],
+  [15, 16],
+  [13, 17],
+  [17, 18],
+  [18, 19],
+  [19, 20],
+  [0, 17],
+];
+
 //main application
-function HandCameraDemo() {
-  const landmarks = useSharedValue({});
-  const device = useCameraDevice('front');
+function HandCameraDemo(): React.JSX.Element {
+  interface Landmark {
+    x: number;
+    y: number;
+  }
+
+  const landmarks = useSharedValue<{ [key: number]: Landmark[] }>({});
+  const device = useCameraDevice('back');
   const { hasPermission, requestPermission } = useCameraPermission();
-  const linePaint = Skia.Paint()
-  linePaint.setColor(Skia.Color('red'))
-  const paint = Skia.Paint()
-  paint.setColor(Skia.Color('blue'))
+  
+  const paint = Skia.Paint();
+  paint.setStyle(PaintStyle.Fill);
+  paint.setStrokeWidth(2);
+  paint.setColor(Skia.Color('red'));
+
+  const linePaint = Skia.Paint();
+  linePaint.setStyle(PaintStyle.Fill);
+  linePaint.setStrokeWidth(4);
+  linePaint.setColor(Skia.Color('lime'));
 
   useEffect(() => {
     // Set up the event listener to listen for hand landmarks detection results
@@ -75,11 +121,15 @@ function HandCameraDemo() {
 
   const frameProcessor = useSkiaFrameProcessor(frame => {
     'worklet';
+  
+    // Process the frame using the 'handLandmarks' function
+    const data = handLandmarks(frame);
     frame.render();
 
-    // Process the frame using the 'handLandmarks' function
-    facedetector(frame);
-
+    // Print a simple message
+    //console.log('MyComponent rendered!');
+    //console.log('landmarks:', landmarks.value);
+    
     /* 
       Paint landmarks on the screen.
       Note: This paints landmarks from the previous frame since
@@ -87,7 +137,7 @@ function HandCameraDemo() {
     */
     if (landmarks.value[0]) {
       const hand = landmarks.value[0];
-      const lines = landmarks.value[0];
+      //const lines = landmarks.value[0];
       
       const frameWidth = frame.width;
       const frameHeight = frame.height;
@@ -136,6 +186,7 @@ function HandCameraDemo() {
       pixelFormat={pixelFormat}
     />
   );
+
 }
 
 export default HandCameraDemo;
