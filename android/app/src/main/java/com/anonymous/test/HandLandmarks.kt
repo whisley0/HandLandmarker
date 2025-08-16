@@ -21,6 +21,10 @@ import com.mrousavy.camera.frameprocessors.Frame
 
 class HandLandmarks(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
+     init {
+        initModel()
+     }
+
     override fun getName(): String {
         return "HandLandmarks" // The name used to access the module from JavaScript
     }

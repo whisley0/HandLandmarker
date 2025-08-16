@@ -13,7 +13,6 @@ class HandLandmarksFrameProcessorPluginPackage : ReactPackage {
       FrameProcessorPluginRegistry.addFrameProcessorPlugin("handLandmarks") { proxy, options ->
         HandLandmarksFrameProcessorPlugin(proxy, options)
       }
-      println("init of the handLandmarks package")
     }
   }
 

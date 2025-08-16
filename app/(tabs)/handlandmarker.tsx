@@ -1,11 +1,11 @@
 // For JS/TS
+import { PaintStyle, Skia } from "@shopify/react-native-skia";
 import React, { useEffect } from 'react';
 import {
   NativeEventEmitter,
   NativeModules,
   Platform, StyleSheet, Text
 } from 'react-native';
-import { useSharedValue } from 'react-native-reanimated';
 import {
   Camera,
   Frame,
@@ -14,33 +14,9 @@ import {
   useSkiaFrameProcessor,
   VisionCameraProxy
 } from 'react-native-vision-camera';
+import { useSharedValue } from 'react-native-worklets-core';
 
-import { PaintStyle, Skia } from "@shopify/react-native-skia";
-
-const { HandLandmarks } = NativeModules;
-
-const handLandmarksEmitter = new NativeEventEmitter(HandLandmarks);
-
-const handLandMarkPlugin = VisionCameraProxy.initFrameProcessorPlugin(
-  "handLandmarks",
-   {},
-  );
-
-// Create a worklet function 'handLandmarks' that will call the plugin function
-export function handLandmarks(frame: Frame) {
-  'worklet'
-
-  if (handLandMarkPlugin == null) {
-    console.log('no plugin found!');
-    throw new Error("Failed to load Frame Processor Plugin!");
-
-  }
-
-  console.log(handLandMarkPlugin.call(frame));
-
-  return handLandMarkPlugin.call(frame)
-}
-
+//initialize key variables
 const lines = [
   [0, 1],
   [1, 2],
@@ -65,17 +41,35 @@ const lines = [
   [0, 17],
 ];
 
-//main application
-function HandCameraDemo(): React.JSX.Element {
-  interface Landmark {
-    x: number;
-    y: number;
-  }
 
-  const landmarks = useSharedValue<{ [key: number]: Landmark[] }>({});
+const { HandLandmarks } = NativeModules;
+
+const handLandmarksEmitter = new NativeEventEmitter(HandLandmarks);
+
+const handLandMarkPlugin = VisionCameraProxy.initFrameProcessorPlugin(
+  "handLandmarks",
+   {},
+  );
+
+// Create a worklet function 'handLandmarks' that will call the plugin function
+export function handLandmarks(frame: Frame) {
+  'worklet'
+
+  if (handLandMarkPlugin == null) {
+    console.log('no plugin found!');
+    throw new Error("Failed to load Frame Processor Plugin!");
+
+  }
+   return handLandMarkPlugin.call(frame)
+}
+
+//main application
+function HandCameraDemo(): React.JSX.Element{
+
+  const landmarks = useSharedValue({});
   const device = useCameraDevice('back');
   const { hasPermission, requestPermission } = useCameraPermission();
-  
+
   const paint = Skia.Paint();
   paint.setStyle(PaintStyle.Fill);
   paint.setStrokeWidth(2);
@@ -91,9 +85,13 @@ function HandCameraDemo(): React.JSX.Element {
     const subscription = handLandmarksEmitter.addListener(
       'onHandLandmarksDetected',
       event => {
+        'worklet';
         // Update the landmarks shared value to paint them on the screen
-        landmarks.value = event.landmarks;
-
+        if (event.landmarks.length) {
+          landmarks.value = event.landmarks;
+        } else {
+          landmarks.value = {};
+        }
         /*
           The event contains values for landmarks and hand.
           These values are defined in the HandLandmarkerResultProcessor class
@@ -105,12 +103,16 @@ function HandCameraDemo(): React.JSX.Element {
           This is where you can handle converting the data into commands
           for further processing.
         */
+
+        console.log('data II:', landmarks.value);
+
       },
     );
-
     // Clean up the event listener when the component is unmounted
     return () => {
+      //landmarks.value 
       subscription.remove();
+      console.log('removed');
     };
   }, []);
 
@@ -121,23 +123,25 @@ function HandCameraDemo(): React.JSX.Element {
 
   const frameProcessor = useSkiaFrameProcessor(frame => {
     'worklet';
-  
-    // Process the frame using the 'handLandmarks' function
-    const data = handLandmarks(frame);
     frame.render();
+
+    //landmarks.value = {1, 2}; 
+
+    // Process the frame using the 'handLandmarks' function
+    handLandmarks(frame);
 
     // Print a simple message
     //console.log('MyComponent rendered!');
-    //console.log('landmarks:', landmarks.value);
-    
+    console.log('data 3.0:', landmarks.value);   
+
     /* 
       Paint landmarks on the screen.
       Note: This paints landmarks from the previous frame since
       frame processing is not synchronous.
     */
+  
     if (landmarks.value[0]) {
       const hand = landmarks.value[0];
-      //const lines = landmarks.value[0];
       
       const frameWidth = frame.width;
       const frameHeight = frame.height;
@@ -163,6 +167,7 @@ function HandCameraDemo(): React.JSX.Element {
         );
       }
     }
+
   }, []);
 
   if (!hasPermission) {
